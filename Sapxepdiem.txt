@@ -1,0 +1,179 @@
+#include <iostream>
+#include <string>
+#include <iomanip> 
+using namespace std;
+
+struct sinhvien {
+	char ten[50];
+    float toan;
+    float ly;
+    float anh;
+    float tb;
+};
+sinhvien ds[100];
+
+void nhapData(sinhvien ds[], int n);
+int menu();
+bool yesOrno();
+void swap(double a, double b);
+double tinhDTB(sinhvien ds[], int i);
+void inbangInfo(sinhvien ds[], int n);
+void sortToan(sinhvien ds[], int n);
+void sortLy(sinhvien ds[], int n);
+void sortAnh(sinhvien ds[], int n);
+void sortTB(sinhvien ds[], int n);
+
+int main() {
+	int n;
+    cout << "Nhap so sinh vien: ";
+    do {
+        cin >> n;
+        if(n <= 0){
+	        cout << "So sinh vien phai la mot so lon hon 0." << endl;
+            cout << "Moi nhap lai so sinh vien: ";
+        }
+    } while (n <= 0);
+	nhapData(ds, n);
+    do {
+	    switch (menu()) {
+	        case 1:
+	            cout << endl;
+	            cout << "Bang diem sap xep theo diem mon Toan: \n";
+	            sortToan(ds, n);
+	            break;
+	        case 2:
+		        cout << endl;
+	            cout << "Bang diem sap xep theo diem mon Ly: \n";
+	            sortLy(ds, n);
+	            break;
+            case 3:
+	            cout << endl;
+	            cout << "Bang diem sap xep theo diem mon Anh: \n";
+	            sortAnh(ds, n);
+	            break;
+            case 4:
+	            cout << endl;
+	            cout << "Bang diem sap xep theo diem Trung Binh: \n";
+	            sortTB(ds, n);
+	            break;
+            case 5:
+	            exit(0);
+        }
+    } while (yesOrno());    
+    return 0;
+}
+
+void nhapData(sinhvien ds[], int n) {
+    for (int i = 0; i < n; i++) {
+        cout << "Nhap ten sinh vien: ";
+        cin >> ds[i].ten;
+        cout << "Nhap diem Toan: ";
+        cin >> ds[i].toan;
+        cout << "Nhap diem Ly: ";
+        cin >> ds[i].ly;
+        cout << "Nhap diem Anh: ";
+        cin >> ds[i].anh;
+        ds[i].tb = (ds[i].toan + ds[i].ly + ds[i].anh)/3;
+    }
+}
+
+int menu() {
+	cout << endl;
+    cout << "======================================================";
+    cout << endl;
+	cout << "Ban muon sap xep danh sach diem theo tieu chi nao: \n";
+    cout << "1. Diem mon Toan.\n";
+    cout << "2. Diem mon Ly.\n";
+    cout << "3. Diem mon Anh.\n";
+    cout << "4. Diem Trung Binh.\n";
+    cout << "5. Thoat.\n";
+    cout << endl;
+    cout << "======================================================";
+    cout << endl;
+    int n;
+	do {
+		cout << "Nhap muc muon chon: ";
+		cin >> n;
+		if (n < 1 || n > 5) {
+	        cout << "Khong ton tai muc ban vua nhap.\n";
+            cout << "Moi ban nhap lai.";
+        }			
+	} while (n < 1 || n > 5);
+	return n;
+}
+
+bool yesOrno() {
+	char ans;
+	do {
+		cout << "\nTiep tuc? Yes <y>, No <n>: ";
+		cin >> ans;
+	} while (ans != 'y' && ans != 'n');
+	return (ans == 'y');
+}
+
+void swap(double a, double b) {
+	double tg;
+    tg = a;
+    a = b;
+    b = tg; 
+}
+
+double tinhDTB(sinhvien ds[], int i) {
+	return ((ds[i].toan + ds[i].ly + ds[i].anh) / 3);
+}
+
+void inbangInfo(sinhvien ds[], int n) {
+	cout << "__________________________________________________________\n";
+	cout << left << setw(4) << "|STT" << setw(25)
+		 << "|   TEN" << setw(7) << "|Toan "
+		 << setw(7) << "|Ly " << setw(7) << "|Anh " << setw(7) << "|TB " << '|' << "\n";
+	for (int i = 0; i < n; i++) {
+		cout << left << '|' << setw(3) << i + 1 << '|' << setw(24) << ds[i].ten << '|' << setw(6) << fixed << setprecision(2) << ds[i].toan << '|'
+			 << setw(6) << ds[i].ly << '|' << setw(6) << ds[i].anh << '|'
+		     << setw(6) << ds[i].tb << '|' << "\n";
+	}
+}
+
+void sortToan(sinhvien ds[], int n) {
+	for (int j = 0; j < n - 1; j++) {
+		int max = j;
+		for (int i = j + 1; i < n; i++)
+			if (ds[i].toan > ds[max].toan)
+				max = i;
+		swap(ds[j], ds[max]);
+	}
+	inbangInfo(ds, n);
+}
+
+void sortLy(sinhvien ds[], int n) {
+	for (int j = 0; j < n - 1; j++) {
+		int max = j;
+		for (int i = j + 1; i < n; i++)
+			if (ds[i].ly > ds[max].ly)
+				max = i;
+		swap(ds[j], ds[max]);
+	}
+	inbangInfo(ds, n);
+}
+
+void sortAnh(sinhvien ds[], int n) {
+	for (int j = 0; j < n - 1; j++) {
+		int max = j;
+		for (int i = j + 1; i < n; i++)
+			if (ds[i].anh > ds[max].anh)
+				max = i;
+		swap(ds[j], ds[max]);
+	}
+	inbangInfo(ds, n);
+}
+
+void sortTB(sinhvien ds[], int n) {
+	for (int j = 0; j < n - 1; j++) {
+		int max = j;
+		for (int i = j + 1; i < n; i++)
+			if (tinhDTB(ds, i) > tinhDTB(ds, max))
+				max = i;
+		swap(ds[j], ds[max]);
+	}
+	inbangInfo(ds, n);
+}
