@@ -1,0 +1,345 @@
+#include <iostream>
+#include <string>	// dùng cho string
+#include <vector>	// dùng cho vector, size, erase, push_back
+#include <algorithm> // dùng cho swap
+#include <iomanip>   // dùng cho setw
+#include <cstdlib>   // dùng cho exit
+
+using namespace std;
+
+struct Sinhvien
+{
+	string ten;
+	int id{};
+	string gioitinh;
+	double kt1{};
+	double kt2{};
+	double cc{};
+	double gk{};
+	double ck{};
+};
+
+int menu()
+{
+	cout << "==========================================\n";
+	cout << "        MENU\n";
+	cout << "==========================================\n";
+	cout << " 1. Them ban ghi sinh vien\n";
+	cout << " 2. Xoa ban ghi sinh vien\n";
+	cout << " 3. Cap nhat ban ghi sinh vien\n";
+	cout << " 4. Quan sat tat ca ban ghi sinh vien\n";
+	cout << " 5. Tim sinh vien theo ten hoac ID\n";
+	cout << " 6. Hien thi sinh vien co diem TB cao nhat\n";
+	cout << " 7. Hien thi sinh vien co diem TB thap nhat\n";
+	cout << " 8. Sap xep cac ban ghi boi diem TB\n";
+	cout << " 9. Thoat\n";
+	int n{};
+	do       // Ði?u ki?n s? nh?p vào h?p l? và t? 1-9
+	{
+		cout << "Nhap muc muon chon: ";
+		cin >> n;
+		if (cin.fail())
+			cin.clear();
+		cin.ignore(32767, '\n');
+	} while (n < 1 || n > 9);
+	return n;
+}
+
+bool timTenOrId()
+{
+	int choice{};
+	do
+	{
+		cout << "Tim theo ten (1) hay so ID (2): ";
+		cin >> choice;
+		if (cin.fail())
+			cin.clear();
+	} while (choice < 1 || choice > 2);
+	return (2 - choice);    // choice = 1 tr? v? true, choice = 2 tr? v? false
+}
+
+bool yesOrno()
+{
+	char ans;
+	do
+	{
+		cout << "\nTiep tuc? Yes <y>, No <n>: ";
+		cin >> ans;
+	} while (ans != 'y' && ans != 'n');
+	return (ans == 'y');
+}
+
+double tinhDTB(vector<Sinhvien> &sv, unsigned int i)
+{
+	return ((sv[i].kt1 + sv[i].kt2 + sv[i].cc + sv[i].gk + sv[i].ck) / 5);
+}
+
+bool timSinhvien(vector<Sinhvien> &sv, string ten, unsigned int &i)
+{
+	for (i = 0; i < sv.size(); ++i)
+	{
+		if (sv[i].ten == ten)
+			return true;
+	}
+	return false;
+}
+
+bool timSinhvien(vector<Sinhvien> &sv, int id, unsigned int &i)
+{
+	for (i = 0; i < sv.size(); ++i)
+	{
+		if (sv[i].id == id)
+			return true;
+	}
+	return false;
+}
+
+bool hethong(vector<Sinhvien> &sv, unsigned int &vitri)
+{
+	if (timTenOrId())
+	{
+		cout << "Nhap ten: ";
+		string ten;
+		cin.ignore(32767, '\n');
+		getline(cin, ten);
+		return timSinhvien(sv, ten, vitri);
+	}
+	else
+	{
+		int id{};
+		do
+		{
+			cout << "Nhap so ID: ";
+			cin >> id;
+			if (cin.fail())
+				cin.clear();
+			cin.ignore(32767, '\n');
+		} while (id < 1);
+		return timSinhvien(sv, id, vitri);
+	}
+}
+
+void themSinhvien(vector<Sinhvien> &sv)
+{
+	Sinhvien temp;
+	cout << "\nNhap ten sinh vien: ";
+	getline(cin, temp.ten);
+	do   // Vòng l?p ki?m tra ID nh?p có trùng nhau không
+	{
+		cout << "Nhap ID sinh vien: ";
+		cin >> temp.id;
+		for (unsigned int i = 0; i < sv.size(); ++i)
+		{
+			if (temp.id == sv[i].id)
+			{
+				cout << "Sinh vien mang so ID " << temp.id << " da ton tai trong he thong!\n";
+				temp.id = -1;
+				break;
+			}
+		}
+	} while (temp.id < 0);
+	cin.ignore(32767, '\n');
+	cout << "Nhap gioi tinh sinh vien <Nam/Nu>: ";
+	getline(cin, temp.gioitinh);
+	cout << "Nhap diem kiem tra lan 1: ";
+	cin >> temp.kt1;
+	cout << "Nhap diem kiem tra lan 2: ";
+	cin >> temp.kt2;
+	cout << "Nhap diem chuyen can: ";
+	cin >> temp.cc;
+	cout << "Nhap diem giua ky: ";
+	cin >> temp.gk;
+	cout << "Nhap diem cuoi ky: ";
+	cin >> temp.ck;
+	sv.push_back(temp);
+}
+
+void xoaSinhvien(vector<Sinhvien> &sv)
+{
+	unsigned int vitri{};
+	if (hethong(sv, vitri))
+	{
+		cout << "Sinh vien " << sv[vitri].ten << " mang so ID " << sv[vitri].id
+			 << " da duoc xoa khoi he thong!\n";
+		sv.erase(sv.begin() + vitri);
+	}
+	else
+		cout << "Khong tim thay sinh vien trong he thong!\n";
+}
+
+void inSinhvienInfo(vector<Sinhvien> &sv, unsigned int i)
+{
+	cout << "\n1. Ten sinh vien: " << sv[i].ten << '\n';
+	cout << "2. So ID: " << sv[i].id << '\n';
+	cout << "3. Gioi tinh: " << sv[i].gioitinh << '\n';
+	cout << "4. Diem kiem tra lan 1: " << sv[i].kt1 << '\n';
+	cout << "5. Diem kiem tra lan 2: " << sv[i].kt2 << '\n';
+	cout << "6. Diem chuyen can: " << sv[i].cc << '\n';
+	cout << "7. Diem giua ky: " << sv[i].gk << '\n';
+	cout << "8. Diem cuoi ky: " << sv[i].ck << '\n';
+	cout << "   Diem trung binh: "
+		 << tinhDTB(sv, i)
+		 << '\n';
+}
+
+void capnhatSinhvien(vector<Sinhvien> &sv)
+{
+	unsigned int vitri{};
+	if (hethong(sv, vitri))
+	{
+		inSinhvienInfo(sv, vitri);
+		cout << "Nhap muc muon cap nhat: ";
+		int choice{};
+		cin >> choice;
+		cout << "Nhap cap nhat moi: ";
+		switch (choice)
+		{
+		case 1:
+			cin.ignore(32767, '\n');
+			getline(cin, sv[vitri].ten);
+			break;
+		case 2:
+			cin >> sv[vitri].id;
+			break;
+		case 3:
+			cin.ignore(32767, '\n');
+			getline(cin, sv[vitri].gioitinh);
+			break;
+		case 4:
+			cin >> sv[vitri].kt1;
+			break;
+		case 5:
+			cin >> sv[vitri].kt2;
+			break;
+		case 6:
+			cin >> sv[vitri].cc;
+			break;
+		case 7:
+			cin >> sv[vitri].gk;
+			break;
+		case 8:
+			cin >> sv[vitri].ck;
+			break;
+		}
+		cout << "Cap nhat thanh cong!\n";
+	}
+	else
+		cout << "Khong tim thay sinh vien trong he thong!\n";
+}
+
+void sapxeptheoID(vector<Sinhvien> &sv)
+{
+	for (unsigned int startIndex = 0; startIndex < sv.size() - 1;
+		 ++startIndex)
+	{
+		unsigned int smallestIndex = startIndex;
+		for (unsigned int currentIndex = startIndex + 1;
+			 currentIndex < sv.size(); ++currentIndex)
+		{
+			if (sv[currentIndex].id < sv[smallestIndex].id)
+				smallestIndex = currentIndex;
+		}
+		swap(sv[startIndex], sv[smallestIndex]);
+	}
+}
+
+void inbangInfo(vector<Sinhvien> &sv)
+{
+	cout << left << setw(4) << "\n|STT" << setw(12) << "|  ID" << setw(25)
+		 << "|   TEN" << setw(10) << "|GIOI TINH" << setw(6) << "| KT1 "
+		 << setw(6) << "| KT2 " << setw(6) << "| DCC " << setw(6) << "| DGK "
+		 << setw(6) << "| DCK " << setw(6) << "| DTB |"
+		 << "\n";
+	for (unsigned int i = 0; i < sv.size(); ++i)
+	{
+		cout << left << '|' << setw(3) << i + 1 << '|' << setw(11) << sv[i].id
+			 << '|' << setw(24) << sv[i].ten << '|' << setw(9)
+			 << sv[i].gioitinh << '|' << setw(5) << sv[i].kt1 << '|'
+			 << setw(5) << sv[i].kt2 << '|' << setw(5) << sv[i].cc << '|'
+			 << setw(5) << sv[i].gk << '|' << setw(5) << sv[i].ck << '|'
+			 << setw(5)
+			 << tinhDTB(sv, i)
+			 << '|' << "\n";
+	}
+}
+
+void maxmin(vector<Sinhvien> &sv, int x)
+{
+	if (x == 1)
+	{
+		unsigned int min = 0;
+		for (unsigned int i = 1; i < sv.size(); ++i)
+			if (tinhDTB(sv, i) < tinhDTB(sv, min))
+				min = i;
+		cout << "Sinh vien " << sv[min].ten << " co diem TB thap nhat.\n";
+		inSinhvienInfo(sv, min);
+	}
+	else
+	{
+		unsigned int max = 0;
+		for (unsigned int i = 1; i < sv.size(); ++i)
+			if (tinhDTB(sv, i) > tinhDTB(sv, max))
+				max = i;
+		cout << "Sinh vien " << sv[max].ten << " co diem TB cao nhat.\n";
+		inSinhvienInfo(sv, max);
+	}
+}
+
+void sapxeptheoDTB(vector<Sinhvien> sv)
+{
+	for (unsigned int j = 0; j < sv.size() - 1; ++j)
+	{
+		unsigned int min = j;
+		for (unsigned int i = j + 1; i < sv.size(); ++i)
+			if (tinhDTB(sv, i) < tinhDTB(sv, min))
+				min = i;
+		swap(sv[j], sv[min]);
+	}
+	inbangInfo(sv);
+}
+
+int main()
+{
+	unsigned int vitri{};
+	vector<Sinhvien> sinhvien;
+	do
+	{
+		switch (menu())
+		{
+		case 1:
+			themSinhvien(sinhvien);
+			sapxeptheoID(sinhvien);    // S?p s?p sinh viên theo ID sau m?i l?n thêm sinh viên
+			break;
+		case 2:
+			xoaSinhvien(sinhvien);
+			break;
+		case 3:
+			capnhatSinhvien(sinhvien);
+			break;
+		case 4:
+			inbangInfo(sinhvien);
+			break;
+		case 5:
+			if (hethong(sinhvien, vitri))
+			{
+				inSinhvienInfo(sinhvien, vitri);
+			}
+			else
+				cout << "Khong tim thay sinh vien trong he thong!\n";
+			break;
+		case 6:
+			maxmin(sinhvien, 2);
+			break;
+		case 7:
+			maxmin(sinhvien, 1);
+			break;
+		case 8:
+			sapxeptheoDTB(sinhvien);
+			break;
+		case 9:
+			exit(0);
+		}
+	} while (yesOrno());
+
+	return 0;
+}
