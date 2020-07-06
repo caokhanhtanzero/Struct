@@ -1,0 +1,149 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+struct DaThuc {
+	int bac;
+	double heso[100];
+};
+typedef struct DaThuc dathuc;
+
+void nhapDaThuc(dathuc &x);
+bool quyChuanDaThuc(dathuc x);
+void xuatDaThuc(dathuc x);
+dathuc tong2DaThuc(dathuc x, dathuc y);
+dathuc hieu2DaThuc(dathuc x, dathuc y);
+dathuc tich2DaThuc(dathuc x, dathuc y);
+double tinhGiaTriDaThuc(dathuc &x, double X);
+
+int main() {
+	int X;
+	dathuc x;
+	cout << "\n\t------------ NHAP DA THUC 1 ------------\t\n";
+	nhapDaThuc(x);
+	xuatDaThuc(x);
+	dathuc y;
+	cout << "\n\t------------ NHAP DA THUC 2 ------------\t\n";
+	nhapDaThuc(y);
+	xuatDaThuc(y);
+	cout << "\n\t----------------------------------------\t\n";
+	cout << "\nTong 2 da thuc tren: ";
+	xuatDaThuc(tong2DaThuc(x, y));
+	cout << "\nHieu 2 da thuc tren: ";
+	xuatDaThuc(hieu2DaThuc(x, y));
+	cout << "\nTich 2 da thuc tren: ";
+	xuatDaThuc(tich2DaThuc(x, y));
+	cout << "\n----------------------------------------------";
+	cout << "\nNhap vao so can de tinh gia tri cua 2 da thuc tren: ";
+	cin >> X;
+	cout << "\nGia tri cua 2 da thuc tren la: \n";
+	cout << tinhGiaTriDaThuc(x, X);
+	cout << "\n";
+	cout << tinhGiaTriDaThuc(y,X);
+	return 0;
+}
+
+void nhapDaThuc(dathuc &x) {
+	do {
+		cout << "\nNhap so bac cua da thuc: ";
+		cin >> x.bac;
+		if (x.bac < 1)
+			cout << "\nSo bac cua da thuc khong hop le.\n";
+	} while (x.bac < 1);
+	cout << "\nNhap cac he so (a0 -> an):\n";
+	for (int i = 0; i <= x.bac; i++) {
+		cout << "\nHe so a" << i << ": ";
+		cin >> x.heso[i];
+	}
+}
+
+bool quyChuanDaThuc(dathuc x) {
+	if (x.heso[x.bac] == 0) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+void xuatDaThuc(dathuc x) {
+	int count = 0;
+	if (quyChuanDaThuc(x) == 0) {
+	    cout << x.heso[0];
+	    x.heso[1] < 0 ? cout << " - " << x.heso[1]*(-1) << "*x" : cout << " + " << x.heso[1] << "*x";
+	    for (int i = 2; i <= x.bac; i++, count++) {
+		    x.heso[i] < 0 ? cout << " - " << x.heso[i] *(-1) << "*x^" << i : cout << " + " << x.heso[i] << "*x^" << i;
+	    }
+	} else {
+		cout << x.heso[0];
+	    x.heso[1] < 0 ? cout << " - " << x.heso[1]*(-1) << "*x" : cout << " + " << x.heso[1] << "*x";
+	    for (int i = 2; i <= x.bac - 1; i++, count++) {
+		    x.heso[i] < 0 ? cout << " - " << x.heso[i] *(-1) << "*x^" << i : cout << " + " << x.heso[i] << "*x^" << i;
+	    }
+	}
+	cout << endl;
+}
+
+dathuc tong2DaThuc(dathuc x, dathuc y) {
+	int Max = x.bac > y.bac ? x.bac : y.bac;
+	int Min = x.bac < y.bac ? x.bac : y.bac;
+	dathuc kq;
+	kq.bac = Max;
+	for (int i = 0; i <= Min; i++) {
+		kq.heso[i] = x.heso[i] + y.heso[i];
+	}
+	if (Max == x.bac) {
+		for (int i = Min + 1; i <= Max; i++) {
+			kq.heso[i] = x.heso[i];
+		}
+	}
+	else {
+		for (int i = Min + 1; i <= Max; i++) {
+			kq.heso[i] = y.heso[i];
+		}
+	}
+	return kq;
+}
+
+dathuc hieu2DaThuc(dathuc x, dathuc y) {
+	int Max = x.bac > y.bac ? x.bac : y.bac;
+	int Min = x.bac < y.bac ? x.bac : y.bac;
+	dathuc kq;
+	kq.bac = Max;
+	for (int i = 0; i <= Min; i++) {
+		kq.heso[i] = x.heso[i] - y.heso[i];
+	}
+	if (Max == x.bac) {
+		for (int i = Min + 1; i <= Max; i++){
+			kq.heso[i] = x.heso[i];
+		}
+	}
+	else {
+		for (int i = Min + 1; i <= Max; i++) {
+			kq.heso[i] = 0 - y.heso[i];
+		}
+	}
+	return kq;
+}
+
+dathuc tich2DaThuc(dathuc x, dathuc y) {
+    dathuc kq;
+    if ((quyChuanDaThuc(x) == 0)) {
+    	kq.bac = x.bac + y.bac;
+	} else {
+		kq.bac = x.bac + y.bac - 1;
+	}
+    for(int i = 0; i <= x.bac; i++) {
+	    for(int j = 0; j <= y.bac; j++) {
+            kq.heso[i+j] += x.heso[i]*y.heso[j];
+        }
+    }
+    return kq;
+}
+
+double tinhGiaTriDaThuc(dathuc &x, double X) {
+	double m;
+	for (int i = 0; i <= x.bac; i++) {
+		m += x.heso[i]*pow(X, i);
+	}
+	return m;
+}
