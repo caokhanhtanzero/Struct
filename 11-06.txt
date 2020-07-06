@@ -1,0 +1,120 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+struct SinhVien {
+    char msv[8];
+    char hoten[1000];
+    double tin;
+    double ta;
+    double ctdl;
+};
+typedef SinhVien sv;
+
+struct Danhsach {
+    sv a[100];
+    int n;
+};
+typedef Danhsach ds;
+ 
+void nhap(sv &sv) {
+    cout << ("\nNhap MSSV: ");
+    fflush(stdin);
+    gets(sv.msv);
+    cout << "Ho va ten: ";
+    gets(sv.hoten);
+    do {
+        cout << "Nhap diem tin: ";
+        cin >> sv.tin;
+    } while (sv.tin > 10 && sv.tin < 0);
+
+    do {
+        cout << "Nhap diem tieng anh: ";
+        cin >> sv.ta;
+    } while (sv.ta > 10 && sv.ta < 0);
+
+    do {
+        cout << "Nhap diem cau truc du lieu: ";
+        cin >> sv.ctdl;
+    } while (sv.ctdl > 10 && sv.ctdl < 0);
+}
+
+double tbc(sv &sv) {
+	double tbc;
+	tbc = (sv.tin*4 + sv.ta*2 + sv.ctdl*3)/9;
+	return tbc;
+}
+
+void xuatsv(sv &sv) {
+	cout << "\nMa so sinh vien: " << sv.msv;
+	cout << "\nHo va ten: " << sv.hoten;
+	cout << "\n\tDiem mon tin: " << sv.tin;
+	cout << "\n\tDiem mon tieng anh: " << sv.ta;
+	cout << "\n\tDiem mon cau truc du lieu: " << sv.ctdl;
+}
+
+void xuat(sv &sv) {
+    cout << "\nSinh vien: " << sv.hoten;
+}
+
+void nhapds(ds &ds) {
+    cout << "\nNhap so luong sinh vien: ";
+    cin >> ds.n;
+    for (int i = 0; i < ds.n; i++) {
+    	cout << "\nSINH VIEN THU " << i + 1;
+        nhap(ds.a[i]);
+    }
+}
+
+void xuatds(ds &ds) {
+	cout << "\n------------------------------------------------------------------------";
+	cout << "\n\tDANH SACH THONG TIN SINH VIEN";
+	for (int i = 0; i < ds.n; i++) {
+		cout << "\n";
+    	cout << "\nSINH VIEN THU " << i + 1;
+        xuatsv(ds.a[i]);
+    }
+}
+
+void diemtbcKhongDuoi4(ds &ds) {
+    for (int i = 0; i < ds.n; i++) {
+        if (tbc(ds.a[i]) >= 4) {
+            xuat(ds.a[i]);
+        }
+    }
+}
+
+void khongMonNaoDuoi3(ds &ds){
+    for (int i = 0; i < ds.n; i++) {
+        if ((ds.a[i].tin >= 3) && (ds.a[i].ta >= 3) && (ds.a[i].ctdl >= 3)) {
+            xuat(ds.a[i]);
+        }
+    }
+}
+
+void nhieuNhatMotMonDuoi4(ds &ds) {
+    for (int i = 0; i < ds.n; i++) {
+        if (((ds.a[i].tin < 4) && (ds.a[i].ctdl >= 4) && (ds.a[i].ta >= 4)) ||
+            ((ds.a[i].ctdl < 4) && (ds.a[i].tin >= 4) && (ds.a[i].ta >= 4)) ||
+            ((ds.a[i].ta < 4) && (ds.a[i].tin >= 4) && (ds.a[i].ctdl >= 4)))
+        {
+            xuat(ds.a[i]);
+        }
+    }
+}
+
+int main() {
+    ds ds;
+    nhapds(ds);
+    xuatds(ds);
+    cout << "\n------------------------------------------------------------------------";
+    cout << "\nDanh sach sinh vien co diem trung binh cong khong duoi 4 la: ";
+    cout << "\n";
+	diemtbcKhongDuoi4(ds);
+    cout << "\nDanh sach sinh vien khong co mon nao diem duoi 3 la: ";
+    cout << "\n";
+	khongMonNaoDuoi3(ds);
+    cout << "\nDanh sach sinh vien co nhieu nhat mot mon diem duoi 4 la: ";
+    cout << "\n";
+	nhieuNhatMotMonDuoi4(ds);
+}
