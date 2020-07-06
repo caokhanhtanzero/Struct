@@ -1,0 +1,179 @@
+#include <iostream>
+#include <cmath>
+#include <iomanip>
+using namespace std;
+
+struct Sophuc {
+	float real;
+	float image;
+};
+typedef Sophuc sophuc;
+
+struct Danhsach {
+    sophuc a[100];
+	int n;
+};
+typedef Danhsach ds;
+
+void menu();
+void nhapSoPhuc(sophuc &sp);
+void inSoPhuc(sophuc &sp);
+double modun(sophuc &sp);
+sophuc tong(sophuc &spA, sophuc &spB, sophuc &spTong);
+sophuc hieu(sophuc &spA, sophuc &spB, sophuc &spHieu);
+sophuc tich(sophuc &spA, sophuc &spB, sophuc &spTich);
+sophuc chia(sophuc &spA, sophuc &spB, sophuc &spChia);
+void nhapdanhsach(ds &ds);
+void xuatdanhsach(ds &ds);
+void sort(ds &ds);
+sophuc tongsp(ds &ds);
+
+int main() {
+	menu();	
+}
+
+void menu() {
+	ds ds;
+	sophuc spC;
+	int ch;
+	nhapdanhsach(ds);
+	if (ds.n == 0) {
+		cout << "Tam biet !!!";
+	} else if (ds.n == 1) {
+		cout << "\nSo phuc ban nhap vao la: ";
+		inSoPhuc(ds.a[0]);
+		cout << "Mo dun cua so phuc la: ";
+		cout << fixed << setprecision(2) << modun(ds.a[0]);
+	} else if (ds.n == 2) {
+		cout << "\n";
+		cout << "\n\t\t--------------MENU--------------";
+	    cout << "\n\t1.Tinh tong hai so phuc";
+	    cout << "\n\t2.Tinh hieu hai so phuc";
+	    cout << "\n\t3.Tinh tich hai so phuc";
+	    cout << "\n\t4.Tinh thuong hai so phuc";
+	    cout << "\n    *************************************************";
+	    cout << "\n\tChon 1 trong cac chuc nang tren: ";
+	    cin >> ch;
+	    switch(ch) {
+	    	case 1: {
+	    		spC = tong(ds.a[0], ds.a[1], spC);
+	    		cout << "Tong cua hai so phuc la: ";
+	    		inSoPhuc(spC);
+				break;
+			}
+			case 2: {
+	    		spC = hieu(ds.a[0], ds.a[1], spC);
+	    		cout << "Hieu cua hai so phuc la: ";
+	    		inSoPhuc(spC);
+				break;
+			}
+			case 3: {
+	    		spC = tich(ds.a[0], ds.a[1], spC);
+	    		cout << "Tich cua hai so phuc la: ";
+	    		inSoPhuc(spC);
+				break;
+			}
+			case 4: {
+	    		spC = chia(ds.a[0], ds.a[1], spC);
+	    		cout << "Thuong cua hai so phuc la: ";
+	    		inSoPhuc(spC);
+				break;
+			}
+		}
+	} else {
+		spC = tongsp(ds);
+		sort(ds);
+		xuatdanhsach(ds);
+		cout << "\n----------------------------------------------------------";
+		cout << "\nTONG CAC SO PHUC TRONG MANG: ";
+		inSoPhuc(spC);
+	}
+}
+
+void nhapSoPhuc(sophuc &sp) {
+	cout << "\nNhap vao phan thuc: ";
+	cin >> sp.real;
+	cout << "Nhap vao phan ao: ";
+	cin >> sp.image;
+}
+
+void inSoPhuc(sophuc &sp) {
+	cout << "\tSo phuc: ";
+	if (sp.image < 0) {
+		cout << sp.real << " - " << (-1)*sp.image << "i";
+	} else cout << sp.real << " + " << sp.image << "i";
+}
+
+double modun(sophuc &sp) {
+	double a;
+	a = sqrt(sp.real*sp.real + sp.image*sp.image);
+	return a;
+}
+
+sophuc tong(sophuc &spA, sophuc &spB, sophuc &spTong) {
+	spTong.real = spA.real + spB.real;
+	spTong.image = spA.image + spB.image;
+	return spTong;
+}
+
+sophuc hieu(sophuc &spA, sophuc &spB, sophuc &spHieu) {
+	spHieu.real = spA.real - spB.real;
+	spHieu.image = spA.image - spB.image;
+	return spHieu;
+}
+
+sophuc tich(sophuc &spA, sophuc &spB, sophuc &spTich) {
+	spTich.real = spA.real*spB.real - spA.image*spB.image;
+	spTich.image = spA.real*spB.image + spA.image*spB.real;
+	return spTich;
+}
+
+sophuc chia(sophuc &spA, sophuc &spB, sophuc &spChia) {
+    spChia.real = (float)(spA.real*spB.real + spA.image*spB.image)/
+        (spB.real*spB.real + spB.image*spB.image);
+    spChia.image = (float)(spA.image*spB.real - spA.real*spB.image)/
+        (spB.real*spB.real + spB.image*spB.image);
+    return spChia;
+}
+
+void nhapdanhsach(ds &ds) {
+	cout << "\nNhap so luong so phuc: ";
+	cin >> ds.n;
+	for (int i = 0;i < ds.n; i++) {
+		cout << "\n\nSO PHUC THU " << i + 1;
+		nhapSoPhuc(ds.a[i]);
+		inSoPhuc(ds.a[i]);
+	}
+}
+
+void xuatdanhsach(ds &ds) {
+	for (int i = 0; i < ds.n; i++) {
+	    inSoPhuc(ds.a[i]);
+	    cout << "\n";
+	}
+}
+
+void sort(ds &ds) {
+	sophuc tmp;
+	cout << "\n----------------------------------------------------------";
+	cout << "\n\tMANG SO PHUC SAP XEP THEO THU TANG DAN CUA MODUN";
+	cout << "\n";
+	for (int i = 0; i < ds.n - 1; i++) {
+		for (int j = i + 1; j < ds.n; j++ ) {
+			if (modun(ds.a[i]) > modun(ds.a[j])) {
+				tmp = ds.a[i];
+				ds.a[i] = ds.a[j];
+				ds.a[j] = tmp;				
+			}
+		}
+	}
+}
+
+sophuc tongsp(ds &ds) {
+	sophuc spC;
+	for (int i = 0; i < ds.n; i++) {
+		spC.real += ds.a[i].real;
+		spC.image += ds.a[i].image;
+	}
+	return spC;
+}
