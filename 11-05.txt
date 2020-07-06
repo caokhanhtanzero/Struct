@@ -1,0 +1,105 @@
+#include <iostream>
+using namespace std;
+
+struct Matrix{
+    int dong, cot;
+    double matrix[100][100];
+};
+
+void nhapMatrix(Matrix &mt) {
+    cout << "\n\nNhap so dong: ";
+    cin >> mt.dong;
+    cout << "Nhap so cot: ";
+    cin >> mt.cot;
+    for (int i = 0; i < mt.dong; i++) {
+        for (int j = 0; j < mt.cot; j++) {
+            cout << "Nhap phan tu " << i << " " << j << ": ";
+            cin >> mt.matrix[i][j];
+        }
+    }
+}
+
+void inMatrix(Matrix &mt) {
+    for (int i = 0; i < mt.dong; i++) {
+        for (int j = 0; j < mt.cot; j++) {
+            cout << mt.matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+void tongMaTrix (const Matrix &mt1, const Matrix &mt2, Matrix &mtTong) {
+	if ((mt1.cot == mt2.cot) && (mt1.dong == mt2.dong)) {
+        mtTong.cot = mt1.cot;
+        mtTong.dong = mt1.dong;
+        for (int i = 0; i < mtTong.dong; i++) {
+            for (int j = 0; j < mtTong.cot; j++) {
+                mtTong.matrix[i][j] = mt1.matrix[i][j] + mt2.matrix[i][j];
+            }
+        }
+    } else {
+    	cout << "Hai ma tran tren khong cong duoc!!!";
+	}
+}
+
+void tranformMatrix(const Matrix &mt, Matrix &mtTran) {
+    mtTran.cot = mt.dong;
+    mtTran.dong = mt.cot;
+    for (int j = 0; j < mt.cot; j++) {
+        for (int i = 0; i < mt.dong; i ++) {
+            mtTran.matrix[j][i] = mt.matrix[i][j];
+        }
+    }
+}
+
+void tichMatrix(const Matrix &mt1, const Matrix &mt2, Matrix &mtTich) {
+    if (mt1.cot != mt2.dong) {
+        cout << "Hai ma tran khong nhan duoc!!!";
+    } else {
+        mtTich.dong = mt1.dong;
+        mtTich.cot = mt2.cot;
+    }
+    for (int i = 0; i < mtTich.dong; i++) {
+        for (int j = 0; j < mtTich.cot; j++) {
+           mtTich.matrix[i][j] = 0;
+            for (int k = 0; k < mtTich.cot; k++){
+                mtTich.matrix[i][j] += mt1.matrix[i][k] * mt2.matrix[k][j];
+            }
+        }
+    }
+}
+
+int main () {
+    Matrix mt1, mt2, mtTong, mtTich;
+    cout << "\nNhap vao ma tran thu nhat: ";
+    nhapMatrix(mt1);
+    cout << "\nNhap vao ma tran thu hai: ";
+    nhapMatrix(mt2);
+    cout << "\n---------------------------------";
+    cout << "\nHai ma tran ban vua nhap vao la: ";
+    cout << "\nMa tran thu nhat: ";
+    cout << "\n";
+    inMatrix(mt1);
+    cout << "\n";
+    cout << "Ma tran thu hai: ";
+    cout << "\n";
+    inMatrix(mt2);
+    cout << "\n---------------------------------";
+    cout << "\nTong cua hai ma tran tren la: ";
+    cout << "\n";
+    tongMaTrix(mt1, mt2, mtTong);
+    inMatrix(mtTong);
+    cout << "\n";
+    Matrix mtTong_t;
+    tranformMatrix(mtTong, mtTong_t);
+    inMatrix(mtTong_t);
+    cout << "\n---------------------------------";
+    cout << "\nTich cua hai ma tran tren la: ";
+    cout << "\n";
+    tichMatrix(mt1, mt2, mtTich);
+    inMatrix(mtTich);
+    cout << "\n";
+    Matrix mtTich_t;
+    tranformMatrix(mtTich, mtTich_t);
+    inMatrix(mtTich_t);
+}
