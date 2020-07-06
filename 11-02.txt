@@ -1,0 +1,297 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+const int HOUR = 1, MINUTE = 2, SECOND = 3;
+
+struct Time {
+    int hour;
+	int minute;
+	int second;
+};
+typedef Time time;
+
+struct Phanso {
+    int tu;
+    int mau;
+};
+typedef Phanso PS;
+
+struct Danhsach {
+	time a[100];
+	int n;
+};
+typedef Danhsach ds;
+
+void menu();;
+void nhapTime(time &tm);
+void inTime(const time &tm);
+void quyChuanTime(time &tm);
+time tongTime (const time &tm1, const time &tm2, time &tmTong);
+time diffTime (const time &tm1, const time &tm2, time &tmDiff);
+bool soSanhLonHonTime(const time &tm1, const time &tm2);
+double convertTimeToD(const time &tm, const int type);
+void inPhanSo(PS ps);
+int UCLN(int a, int b);
+void toiGianPhanSo(PS &ps);
+PS convertTimeToPS(const time &tm, const int type);
+void nhapds(ds &ds);
+void xuatds(ds &ds);
+void sort(ds &ds);
+void twelfth(ds &ds);
+
+int main() {
+    menu();
+}
+
+void menu() {
+	time tmp;
+	int ch;
+	ds ds;
+	nhapds(ds);
+	if (ds.n == 0) {
+		cout << "Tam biet !!!";
+	} else if (ds.n == 1) {
+		cout << "\nTime ban nhap vao la: ";
+		inTime(ds.a[0]);
+		cout << "\n";
+		cout << "\n\t\t--------------MENU--------------";
+	    cout << "\n\t1.Chuyen doi Time sang D theo Hour";
+	    cout << "\n\t2.Chuyen doi Time sang D theo Minute";
+	    cout << "\n\t3.Chuyen doi Time sang D theo Second";
+	    cout << "\n\t4.Chuyen doi Time sang PhanSo theo Hour";
+	    cout << "\n\t5.Chuyen doi Time sang PhanSo theo Minute";
+	    cout << "\n\t6.Chuyen doi Time sang PhanSo theo Second";
+	    cout << "\n    *************************************************";
+	    cout << "\n\tChon 1 trong cac chuc nang tren: ";
+	    cin >> ch;
+	    switch(ch) {
+	    	case 1: {
+	    		cout << convertTimeToD(ds.a[0], 1);
+				break;
+			}
+			case 2: {
+	    		cout << convertTimeToD(ds.a[0], 2);
+				break;
+			}
+			case 3: {
+	    		cout << convertTimeToD(ds.a[0], 3);
+				break;
+			}
+			case 4: {
+				inPhanSo(convertTimeToPS(ds.a[0], 1));
+				break;
+			}
+			case 5: {
+				inPhanSo(convertTimeToPS(ds.a[0], 2));
+				break;
+			}
+			case 6: {
+				inPhanSo(convertTimeToPS(ds.a[0], 3));
+				break;
+			}
+		}
+	} else if (ds.n == 2) {
+		cout << "\n\t\t--------------MENU--------------";
+	    cout << "\n\t1.Tinh tong 2 Time";
+	    cout << "\n\t2.Tinh khoang cach giua 2 Time";
+	    cout << "\n\t3.So sanh 2 Time";
+	    cout << "\n    *************************************************";
+	    cout << "\n\tChon 1 trong cac chuc nang tren: ";
+	    cin >> ch;
+	    switch(ch) {
+	    	case 1: {
+	    		cout << "\nTong cua 2 Time ban vua nhap la: ";
+	    		inTime(tongTime(ds.a[0], ds.a[1], tmp));
+				break;
+			}
+			case 2: {
+				cout << "\nKhoang cach giua 2 Time ban nhap la: ";
+	    		inTime(diffTime(ds.a[0], ds.a[1], tmp));
+				break;
+			}
+			case 3: {
+				if (soSanhLonHonTime(ds.a[0], ds.a[1]) == 1) {
+					cout << "\nTime thu nhat lon hon Time thu hai";
+				} else cout << "\nTime thu hai lon hon Time thu nhat";
+				break;
+			}
+		}
+	} else {
+		cout << "\n\nDanh sach Time ban vua nhap vao la: ";
+		xuatds(ds);
+		cout << "\n\nDanh sach Time sau kkhi sap xep lai la: ";
+		sort(ds);
+		twelfth(ds);
+		double distanceTimeArr[ds.n][ds.n];
+        for (int i = 0 ;i < ds.n ;i ++) {  // tinh khoang cach giua cac Time luu vao mang 2 chieu
+            for (int j = i + 1 ;j < ds.n ;j ++) {
+                time tmp;
+                diffTime(ds.a[j], ds.a[i], tmp);
+                distanceTimeArr[i][j] = convertTimeToD(tmp, HOUR);
+            }
+        }
+        for (int i = 0 ;i < ds.n ;i ++) { // tim cac khoang thoi gian bang nhau trong mang 2 chieu
+            for (int j = i + 1 ;j < ds.n ;j ++) {
+                int count = 1;
+                for (int k = i + 1 ;k < ds.n ;k ++) {
+                    for (int l = 0 ;l < ds.n ;l ++) {
+                        if (distanceTimeArr[i][j] == distanceTimeArr[k][l] && distanceTimeArr[i][j] != 0) {
+                            count++;
+                            inTime(ds.a[k]);
+                            cout << " ";
+                            inTime(ds.a[l]);
+                            cout << endl;
+                            distanceTimeArr[k][l] = 0; // Ä‘Ã¡nh dáº¥u = 0 cho cÃ¡c khoáº£ng cÃ¡ch Ä‘Ã£ kiá»ƒm tra
+                        }
+                    }
+                }
+                if (count > 1) {
+                    inTime(ds.a[i]);
+                    cout << " ";
+                    inTime(ds.a[j]);
+                    cout << endl;
+                    cout << "Cac cap co khoang cach la "<< distanceTimeArr[i][j] << " gio la " << count << " cap " << endl;
+                }
+                cout << endl;
+            }
+        }
+    }
+}
+
+void nhapTime(time &tm) {
+    cout << "\nNhap gio: ";
+    cin >> tm.hour;
+    cout << "Nhap phut: ";
+    cin >> tm.minute;
+    cout << "Nhap giay: ";
+    cin >> tm.second;
+}
+
+void inTime(const time &tm) {
+    if (tm.hour < 10) {
+        cout << "0" << tm.hour << ":";
+    } else cout << tm.hour << ":";
+    if (tm.minute < 10) {
+        cout << "0" << tm.minute << ":";
+    } else cout << tm.minute << ":";
+    if (tm.second < 10) {
+        cout << "0" << tm.second;
+    } else cout << tm.second;
+}
+
+void quyChuanTime(time &tm) {
+    if (tm.hour > 23 ) tm.hour = 23;
+    else if (tm.hour < 0) tm.hour = 0;
+    if (tm.minute > 59) tm.minute = 59;
+    else if(tm.minute < 0) tm.minute = 0;
+    if (tm.second > 59) tm.second = 59;
+    else if (tm.second < 0) tm.second = 0;
+}
+
+time tongTime (const time &tm1, const time &tm2, time &tmTong) {
+    int second = tm1.hour*3600 + tm1.minute*60 + tm1.second + tm2.hour*3600 + tm2.minute*60 + tm2.second;
+    tmTong.hour = second/3600;
+    tmTong.minute = (second % 3600)/60;
+    tmTong.second = (second % 3600) % 60;
+    return tmTong;
+}
+
+time diffTime (const time &tm1, const time &tm2, time &tmDiff) {
+    int second = abs(tm1.hour*3600 + tm1.minute*60 + tm1.second - tm2.hour*3600 - tm2.minute*60 - tm2.second);
+    tmDiff.hour = second/3600;
+    tmDiff.minute = (second % 3600)/60;
+    tmDiff.second = (second % 3600) % 60;
+    return tmDiff;
+}
+
+
+bool soSanhLonHonTime(const time &tm1, const time &tm2) {
+    if ((tm1.hour*3600 + tm1.minute*60 + tm1.second - tm2.hour*3600 - tm2.minute*60 - tm2.second) > 0 ) return 1;
+    else return 0;
+}
+
+double convertTimeToD(const time &tm, const int type) {
+    if ( type == 1) {
+        return tm.hour + (double)tm.minute/60 + (double)tm.second/3600;
+    } else if (type == 2) {
+        return tm.hour*60 + tm.minute + (double)tm.second/60;
+    } else {
+        return tm.hour*3600 + tm.minute*60 + tm.second;
+    }
+}
+
+void inPhanSo(PS ps) {
+	cout << "Phan so: " << ps.tu << " / " << ps.mau;
+	cout << "\n--------------------------";
+}
+
+int UCLN(int a, int b) {
+	a = abs(a);
+	b = abs(b);
+    if (b == 0) return a;
+    return UCLN(b, a % b);
+}
+
+void toiGianPhanSo(PS &ps) {
+	int c = UCLN(ps.tu,ps.mau);
+	ps.tu = ps.tu/c;
+	ps.mau = ps.mau/c;
+}
+
+PS convertTimeToPS(const time &tm, const int type) {
+    PS result;
+    double toPhanSo = convertTimeToD(tm, type);
+    result.tu = toPhanSo*1000000;
+    result.mau = 1000000;
+    toiGianPhanSo(result);
+    return result;
+}
+
+void nhapds(ds &ds) {
+	cout << "\nNhap vao so luong Time: ";
+	cin >> ds.n;
+	for (int i = 0; i < ds.n; i++) {
+		cout << "\n\nNhap vao Time thu " << i + 1 << ": ";
+		nhapTime(ds.a[i]);
+		quyChuanTime(ds.a[i]);
+		inTime(ds.a[i]);
+	}
+}
+
+void xuatds(ds &ds) {
+	for (int i = 0; i < ds.n; i++) {
+		cout << "\n";
+		inTime(ds.a[i]);
+		cout << "\n";
+	}
+}
+
+void sort(ds &ds) {
+    time temp;
+    for (int i = 0; i < ds.n - 1; i ++) {
+        for (int i = 0 ; i < ds.n; i ++) {
+            if (soSanhLonHonTime(ds.a[i], ds.a[i + 1])) {
+                temp = ds.a[i];
+                ds.a[i] = ds.a[i + 1];
+                ds.a[i + 1] = temp;
+            }
+        }
+    }
+    xuatds(ds);
+}
+
+void twelfth(ds &ds) {
+	time twelfth = {12, 0, 0};
+    int pos;
+    for (int i = 0; i < ds.n; i ++) {
+        if (soSanhLonHonTime(ds.a[i], twelfth)) {
+            pos = i;
+            break;
+        } else pos = ds.n;
+    }
+    cout << "\n\n";
+    cout << "\nSo luong thoi gian truoc 12:00:00 la: " << pos;
+	cout << "\nSo luong thoi gian sau 12:00:00 la: " << ds.n - pos;
+    cout << endl;
+}
