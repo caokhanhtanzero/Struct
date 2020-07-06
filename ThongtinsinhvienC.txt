@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+
+struct SinhVien{
+    char hoten[30];
+    float d1, d2, d3, dtb;
+    int hb;
+};
+ 
+typedef SinhVien SV;
+
+void tinhDTB(SV &sv){
+    sv.dtb = (sv.d1*45 + sv.d2*60 + sv.d3*30)/(45 + 60 + 30);    
+}
+
+void nhap(SV &sv){
+    printf("\nNhap ho va ten: "); fflush(stdin); gets(sv.hoten);
+    printf("\nNhap diem 3 mon: "); scanf("%f%f%f", &sv.d1, &sv.d2, &sv.d3);
+    tinhDTB(sv);
+}
+
+int hocbong(SV &sv) {
+	if((sv.dtb >= 9) && (sv.d1 >= 8.5)) {
+		sv.hb = 1200000; 
+	} else if ((sv.dtb >= 8) && (sv.d1 >= 8)) {
+		sv.hb = 1000000;
+	} else if (sv.dtb >= 7.5) {
+		sv.hb = 800000;
+	} else {
+		sv.hb = 0;
+	}
+	return sv.hb;
+}
+
+void hocbongN(SV a[], int n){
+    printf("\n____________________________________\n");
+    for(int i = 0; i < n; i++){
+        printf("\nHoc bong cua SV thu %d la: %10d", i + 1, hocbong(a[i]));
+    }
+    printf("\n____________________________________\n");
+}
+
+void nhapN(SV a[], int n){
+    printf("\n____________________________________\n");
+    for(int i = 0; i< n; ++i){
+        printf("\nNhap SV thu %d:", i+1);
+        nhap(a[i]);
+    }
+    printf("\n____________________________________\n");
+}
+
+void xuatFile(SV a[], int n, char fileName[]){
+	const char *filePath = "E:/FILEDB.txt";
+    FILE * fp;
+    fp = fopen (fileName,"w");
+    fprintf(fp, "%20s%10s%10s%10s%10s%10s\n", "Ho Ten", "DT1", "DT2", "DT3", "DTB", "HB");
+    for(int i = 0;i < n;i++){
+        fprintf(fp, "%20s%10f%10f%10f%10f%10d\n", a[i].hoten, a[i].d1, a[i].d2, a[i].d3, a[i].dtb, a[i].hb);
+    }
+    fclose (fp);
+}
+
+int main() {
+    SV a[100];	
+	int soluong;
+	char fileName[] = "FILEDB.txt";
+	printf("\nNhap so luong SV: "); 
+	scanf("%d", &soluong);
+	nhapN(a, soluong);
+	hocbongN(a, soluong);
+	xuatFile(a, soluong, fileName);
+}
