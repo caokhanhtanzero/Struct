@@ -34,7 +34,7 @@ int menu()
 	cout << " 8. Sap xep cac ban ghi boi diem TB\n";
 	cout << " 9. Thoat\n";
 	int n{};
-	do       // Ði?u ki?n s? nh?p vào h?p l? và t? 1-9
+	do       // Ðiều kiện số nhập vào hợp lý là từ 1-9
 	{
 		cout << "Nhap muc muon chon: ";
 		cin >> n;
